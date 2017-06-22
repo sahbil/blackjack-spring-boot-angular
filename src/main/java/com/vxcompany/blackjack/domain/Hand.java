@@ -1,5 +1,9 @@
 package com.vxcompany.blackjack.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.data.rest.core.annotation.RestResource;
+
 import javax.persistence.*;
 import java.util.*;
 
@@ -12,14 +16,17 @@ import java.util.*;
 public class Hand {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "player_id")
+    @JoinColumn(name = "player_id", nullable = false)
     private Player player;
 
-    @OneToMany(mappedBy = "hand", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "hand", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.EAGER)
+    @RestResource(path = "handCards", rel="card")
+    @JsonIgnore
     private List<Card> cards = new LinkedList<>();
 
     private int betAmount;

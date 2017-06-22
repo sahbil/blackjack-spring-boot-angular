@@ -1,7 +1,8 @@
 package com.vxcompany.blackjack.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.vxcompany.blackjack.config.CONSTANT;
-import com.vxcompany.blackjack.config.CardConverter;
 
 import javax.persistence.*;
 import java.util.*;
@@ -15,14 +16,17 @@ import java.util.*;
 public class Deck {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "deck", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @OneToMany(targetEntity = Player.class, mappedBy = "deck", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("name asc")
     private Set<Player> playerList = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "deck", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(targetEntity = Card.class,mappedBy = "deck", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+//    @JsonManagedReference
+    @JsonIgnore
     private Set<Card> cards = new HashSet<>();
 
 
@@ -109,16 +113,19 @@ public class Deck {
     /**
      * Shuffle the cards
      */
-    public void shuffle() {
+    public List<Card> shuffle() {
         List<Card> shuffleMe = new ArrayList<>(cards);
         Collections.shuffle(shuffleMe);
-        cards = new LinkedHashSet<>();
-        cards.addAll(shuffleMe);
+        return shuffleMe;
     }
 
     public void removeCard(Card card) {
         getCards().remove(card);
         card.setDeck(null);
+    }
+
+    public String toString() {
+        return getId() + " has " + getPlayerList().size() + " players and " + getCards().size() + " cards left";
     }
 //
 //    /**

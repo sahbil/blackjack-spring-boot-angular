@@ -7,6 +7,7 @@ import com.vxcompany.blackjack.repository.DeckRepository;
 import com.vxcompany.blackjack.repository.HandRepository;
 import com.vxcompany.blackjack.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
@@ -16,14 +17,13 @@ import java.util.stream.Collectors;
 /**
  * Created by xiabili on 13/06/2017.
  */
-
+@Service
 public class VXGameServiceImpl implements VXGameService {
 
     @Autowired
     DeckRepository deckRepository;
     @Autowired
     HandRepository handRepository;
-
     @Autowired
     PlayerRepository playerRepository;
 
@@ -33,12 +33,29 @@ public class VXGameServiceImpl implements VXGameService {
     }
 
     @Override
+    public Deck getDeck(long id) {
+        return deckRepository.findOne(id);
+    }
+
+    @Override
     public Deck newDeck() {
         Deck deck = new Deck();
         Dealer dealer = new Dealer();
         deck.addPlayer(dealer);
         saveDeck(deck);
         return deck;
+    }
+
+    @Override
+    public Player newPlayer(String name) {
+        Player player = new Player(name);
+        playerRepository.save(player);
+        return player;
+    }
+
+    @Override
+    public Player getPlayer(String id) {
+        return playerRepository.findOne(Long.parseLong(id));
     }
 
     @Override
@@ -53,19 +70,22 @@ public class VXGameServiceImpl implements VXGameService {
     }
 
     @Override
-    public Deck shuffleCards(Deck deck) {
-        deck.shuffle();
-        saveDeck(deck);
-        return deck;
+    public List<Card> shuffleCards(Deck deck) {
+        return deck.shuffle();
     }
 
     @Override
     public Hand dealerHand(Dealer dealer) {
-        return dealer.getHands().get(0);
+        return dealer.getHands().iterator().next();
     }
 
     @Override
-    public List<Hand> playerHands(Player player) {
+    public Hand getHand(long id) {
+        return handRepository.findOne(id);
+    }
+
+    @Override
+    public Set<Hand> playerHands(Player player) {
         return player.getHands();
     }
 
@@ -136,5 +156,11 @@ public class VXGameServiceImpl implements VXGameService {
     @Override
     public void saveDeck(Deck deck) {
         deckRepository.save(deck);
+    }
+
+    @Override
+    public void savePlayer(Player player) {
+        player.addHand(new Hand());
+        playerRepository.save(player);
     }
 }

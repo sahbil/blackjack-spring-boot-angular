@@ -1,14 +1,19 @@
 package com.vxcompany.blackjack.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
 @Table
+@NoArgsConstructor
 public class Card {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "suit")
@@ -21,10 +26,12 @@ public class Card {
 
     @ManyToOne
     @JoinColumn(name = "deck_id")
+    @JsonBackReference
     private Deck deck;
 
     @ManyToOne
     @JoinColumn(name = "hand_id", nullable = true)
+    @JsonBackReference
     private Hand hand;
 
     public Card(CardSuit suit, CardValue faceValue) {

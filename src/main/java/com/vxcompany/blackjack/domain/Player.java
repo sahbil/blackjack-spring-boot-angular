@@ -1,5 +1,9 @@
 package com.vxcompany.blackjack.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 import java.util.*;
@@ -7,21 +11,25 @@ import java.util.*;
 /**
  * Created by xiabili on 12/06/2017.
  */
+
 @Entity
 @Table
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@NoArgsConstructor
 public class Player {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "deck_id")
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "deck_id", columnDefinition = "BIGINT UNSIGNED", nullable = true)
     private Deck deck;
 
-    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Hand> hands = new ArrayList<>();
+    @JsonManagedReference
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<Hand> hands = new HashSet<>();
 
     private int cash = 200;
     private boolean isDealer = false;
@@ -63,11 +71,11 @@ public class Player {
         this.deck = deck;
     }
 
-    public List<Hand> getHands() {
+    public Set<Hand> getHands() {
         return hands;
     }
 
-    public void setHands(List<Hand> hands) {
+    public void setHands(Set<Hand> hands) {
         this.hands = hands;
     }
 
@@ -97,22 +105,19 @@ public class Player {
 
     @Override
     public boolean equals(Object o) {
-        // TESTING
-        return true;
-//        if (this == o) return true;
-//        if (o == null || getClass().equals(o.getClass())) return false;
-//
-//        Player player = (Player) o;
-//
-//        if (id != null ? !id.equals(player.id) : player.id != null) return false;
-//        return name.equals(player.name);
+        if (this == o) return true;
+        if (o == null || getClass().equals(o.getClass())) return false;
+
+        Player player = (Player) o;
+
+        if (id != null ? !id.equals(player.id) : player.id != null) return false;
+        return name.equals(player.name);
     }
 
     @Override
     public int hashCode() {
-//        int result = id != null ? id.hashCode() : 0;
-//        result = 31 * result + name.hashCode();
-        // TESTING
-        return getName().length();
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + name.hashCode();
+        return result;
     }
 }
