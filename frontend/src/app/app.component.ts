@@ -2,6 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {VxgameserviceService} from "./vxgameservice.service";
 import {ModalDirective} from 'ngx-bootstrap/modal';
 import {Deck} from "./model/deck.interface";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-root',
@@ -20,7 +21,7 @@ export class AppComponent implements OnInit {
   playerName: string;
   hasError: boolean = false;
 
-  constructor(public vxGameService: VxgameserviceService) {
+  constructor(private vxGameService: VxgameserviceService, private router: Router) {
 
   }
 
@@ -37,7 +38,10 @@ export class AppComponent implements OnInit {
     if (this.playerName) {
       this.hasError = false;
       this.vxGameService.newPlayer(this.playerName);
-      this.vxGameService.joinGame().subscribe(res => console.log(res), error => console.error(error));
+      this.vxGameService.joinGame().subscribe(res => {
+        this.hideModal();
+        this.router.navigateByUrl('game');
+      }, error => console.error(error));
     } else {
       this.hasError = false;
     }

@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import {VxgameserviceService} from "../vxgameservice.service";
+import {Router} from "@angular/router";
+import {Deck} from "../model/deck.interface";
+import {Player} from "../model/player.interface";
 
 @Component({
   selector: 'app-basicgame',
@@ -7,9 +11,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BasicgameComponent implements OnInit {
 
-  constructor() { }
+  game: Deck;
+  players: Player[];
+
+  constructor(private vxGameService: VxgameserviceService, private router: Router) { }
 
   ngOnInit() {
+    this.game = this.vxGameService.getGame();
   }
 
 }
