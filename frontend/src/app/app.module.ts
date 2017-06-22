@@ -7,11 +7,13 @@ import {HttpModule} from "@angular/http";
 import {FormsModule} from "@angular/forms";
 import {VxgameserviceService} from "./vxgameservice.service";
 import {AppRoutingModule} from "./app.routing";
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    BasicgameComponent
+    BasicgameComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,

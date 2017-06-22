@@ -1,0 +1,60 @@
+<!-- Page Content -->
+<div class="container main">
+  <div class="row">
+    <div class="col-md-6 col-sm-12">
+      <h1>BlackJack</h1>
+      <p>Spring Boot, JPA, Spring Data, Hibernate, RxJs, Angular, TypeScript, Bootstrap</p>
+      <div *ngIf="games; else elseBlock">
+        <alert type="info">
+          <strong>Welcome!</strong> Please choose a game for playing.
+        </alert>
+        <div class="table-responsive">
+          <table class="table">
+
+            <tr *ngFor="let game of games">
+              <td>Game-{{game.id}}</td>
+              <td>Players: {{game.playerList.length}}</td>
+              <td>
+                <button *ngIf="game.playerList.length<4" type="button" class="btn btn-success" (click)="showModal(game)">Play</button>
+                <button *ngIf="game.playerList.length>=4" type="button" class="btn btn-danger">Full</button>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <ng-template #elseBlock>
+        <alert type="danger">There is no game at this moment</alert>
+      </ng-template>
+    </div>
+  </div>
+  <!-- /.row -->
+
+  <div *ngIf="isModalShown" [config]="{ show: true }" (onHidden)="onHidden()" bsModal #autoShownModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Joining Game</h4>
+          <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <alert type="danger" *ngIf="hasError">
+            Please enter your name!
+          </alert>
+          <p>
+            <input type="text"
+                   class="form-control"
+                   placeholder="your name ..."
+                   [(ngModel)]="playerName"
+                   name="playerName"
+                   id="playerName">
+          </p>
+          <p class="text-right">
+            <button type="button" class="btn btn-primary" (click)="joinGame()">Join</button>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
